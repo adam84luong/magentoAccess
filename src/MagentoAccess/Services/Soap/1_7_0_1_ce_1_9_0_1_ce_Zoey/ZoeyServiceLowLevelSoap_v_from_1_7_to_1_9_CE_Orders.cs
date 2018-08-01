@@ -17,23 +17,23 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 		{
 			try
 			{
-				filters filters;
+				TsZoey_v_1_9_0_1_CE.filters filters;
 
 				if( string.IsNullOrWhiteSpace( this.Store ) )
-					filters = new filters { complex_filter = new complexFilter[ 2 ] };
+					filters = new TsZoey_v_1_9_0_1_CE.filters { complex_filter = new TsZoey_v_1_9_0_1_CE.complexFilter[ 2 ] };
 				else
 				{
-					filters = new filters { complex_filter = new complexFilter[ 3 ] };
-					filters.complex_filter[ 2 ] = new complexFilter { key = "store_id", value = new associativeEntity { key = "in", value = this.Store } };
+					filters = new TsZoey_v_1_9_0_1_CE.filters { complex_filter = new TsZoey_v_1_9_0_1_CE.complexFilter[ 3 ] };
+					filters.complex_filter[ 2 ] = new TsZoey_v_1_9_0_1_CE.complexFilter { key = "store_id", value = new TsZoey_v_1_9_0_1_CE.associativeEntity { key = "in", value = this.Store } };
 				}
 
-				filters.complex_filter[ 1 ] = new complexFilter { key = "updated_at", value = new associativeEntity { key = "from", value = modifiedFrom.ToSoapParameterString() } };
-				filters.complex_filter[ 0 ] = new complexFilter { key = "updated_at", value = new associativeEntity { key = "to", value = modifiedTo.ToSoapParameterString() } };
+				filters.complex_filter[ 1 ] = new TsZoey_v_1_9_0_1_CE.complexFilter { key = "updated_at", value = new TsZoey_v_1_9_0_1_CE.associativeEntity { key = "from", value = modifiedFrom.ToSoapParameterString() } };
+				filters.complex_filter[ 0 ] = new TsZoey_v_1_9_0_1_CE.complexFilter { key = "updated_at", value = new TsZoey_v_1_9_0_1_CE.associativeEntity { key = "to", value = modifiedTo.ToSoapParameterString() } };
 
 				const int maxCheckCount = 2;
 				const int delayBeforeCheck = 1800000;
 
-				var res = new salesOrderListResponse();
+				var res = new TsZoey_v_1_9_0_1_CE.salesOrderListResponse();
 
 				var privateClient = this._clientFactory.GetClient();
 
@@ -68,21 +68,21 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 			{
 				ordersIdsAgregated = string.Join( ",", ordersIds );
 
-				filters filters;
+				TsZoey_v_1_9_0_1_CE.filters filters;
 				if( string.IsNullOrWhiteSpace( this.Store ) )
-					filters = new filters { complex_filter = new complexFilter[ 1 ] };
+					filters = new TsZoey_v_1_9_0_1_CE.filters { complex_filter = new TsZoey_v_1_9_0_1_CE.complexFilter[ 1 ] };
 				else
 				{
-					filters = new filters { complex_filter = new complexFilter[ 2 ] };
-					filters.complex_filter[ 1 ] = new complexFilter { key = "store_id", value = new associativeEntity { key = "in", value = this.Store } };
+					filters = new TsZoey_v_1_9_0_1_CE.filters { complex_filter = new TsZoey_v_1_9_0_1_CE.complexFilter[ 2 ] };
+					filters.complex_filter[ 1 ] = new TsZoey_v_1_9_0_1_CE.complexFilter { key = "store_id", value = new TsZoey_v_1_9_0_1_CE.associativeEntity { key = "in", value = this.Store } };
 				}
 
-				filters.complex_filter[ 0 ] = new complexFilter { key = "increment_id", value = new associativeEntity { key = "in", value = ordersIdsAgregated } };
+				filters.complex_filter[ 0 ] = new TsZoey_v_1_9_0_1_CE.complexFilter { key = "increment_id", value = new TsZoey_v_1_9_0_1_CE.associativeEntity { key = "in", value = ordersIdsAgregated } };
 
 				const int maxCheckCount = 2;
 				const int delayBeforeCheck = 1800000;
 
-				var res = new salesOrderListResponse();
+				var res = new TsZoey_v_1_9_0_1_CE.salesOrderListResponse();
 
 				var privateClient = this._clientFactory.GetClient();
 
@@ -114,7 +114,7 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 				const int maxCheckCount = 2;
 				const int delayBeforeCheck = 300000;
 
-				var res = new salesOrderInfoResponse();
+				var res = new TsZoey_v_1_9_0_1_CE.salesOrderInfoResponse();
 
 				var privateClient = this._clientFactory.GetClient();
 

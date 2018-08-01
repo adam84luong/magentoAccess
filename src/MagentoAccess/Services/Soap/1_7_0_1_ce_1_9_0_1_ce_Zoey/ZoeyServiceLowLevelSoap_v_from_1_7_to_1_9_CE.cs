@@ -164,10 +164,10 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 		}
 		#endregion
 
-		private static void AddFilter( filters filters, string value, string key, string valueKey )
+		private static void AddFilter( TsZoey_v_1_9_0_1_CE.filters filters, string value, string key, string valueKey )
 		{
 			var temp = filters.complex_filter.ToList();
-			temp.Add( new complexFilter() { key = key, value = new associativeEntity() { key = valueKey, value = value } } );
+			temp.Add( new TsZoey_v_1_9_0_1_CE.complexFilter() { key = key, value = new TsZoey_v_1_9_0_1_CE.associativeEntity() { key = valueKey, value = value } } );
 			filters.complex_filter = temp.ToArray();
 		}
 
