@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -7,14 +6,12 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MagentoAccess.Misc;
 using MagentoAccess.Models.GetProducts;
 using MagentoAccess.Models.Services.Soap.GetCategoryTree;
 using MagentoAccess.Models.Services.Soap.GetMagentoInfo;
-using MagentoAccess.Models.Services.Soap.GetOrders;
 using MagentoAccess.Models.Services.Soap.GetProductAttributeInfo;
 using MagentoAccess.Models.Services.Soap.GetProductAttributeMediaList;
 using MagentoAccess.Models.Services.Soap.GetProductInfo;
@@ -22,55 +19,38 @@ using MagentoAccess.Models.Services.Soap.GetProducts;
 using MagentoAccess.Models.Services.Soap.GetSessionId;
 using MagentoAccess.Models.Services.Soap.GetStockItems;
 using MagentoAccess.Models.Services.Soap.PutStockItems;
-using MagentoAccess.Services.Soap._1_9_2_1_ce;
 using MagentoAccess.TsZoey_v_1_9_0_1_CE;
-using Netco.Extensions;
 using Netco.Logging;
 using Newtonsoft.Json;
 using associativeEntity = MagentoAccess.MagentoSoapServiceReference.associativeEntity;
-using catalogCategoryTreeResponse = MagentoAccess.TsZoey_v_1_9_0_1_CE.catalogCategoryTreeResponse;
-using catalogInventoryStockItemListResponse = MagentoAccess.MagentoSoapServiceReference.catalogInventoryStockItemListResponse;
-using catalogInventoryStockItemMultiUpdateResponse = MagentoAccess.MagentoSoapServiceReference.catalogInventoryStockItemMultiUpdateResponse;
-using catalogInventoryStockItemUpdateEntity = MagentoAccess.MagentoSoapServiceReference.catalogInventoryStockItemUpdateEntity;
-using catalogProductAttributeInfoResponse = MagentoAccess.TsZoey_v_1_9_0_1_CE.catalogProductAttributeInfoResponse;
-using catalogProductAttributeMediaListResponse = MagentoAccess.TsZoey_v_1_9_0_1_CE.catalogProductAttributeMediaListResponse;
-using catalogProductCreateEntity = MagentoAccess.MagentoSoapServiceReference.catalogProductCreateEntity;
-using catalogProductInfoResponse = MagentoAccess.MagentoSoapServiceReference.catalogProductInfoResponse;
 using complexFilter = MagentoAccess.MagentoSoapServiceReference.complexFilter;
-using customerCustomerEntityToCreate = MagentoAccess.MagentoSoapServiceReference.customerCustomerEntityToCreate;
 using filters = MagentoAccess.MagentoSoapServiceReference.filters;
-using magentoInfoResponse = MagentoAccess.MagentoSoapServiceReference.magentoInfoResponse;
-using Mage_Api_Model_Server_Wsi_HandlerPortTypeClient = MagentoAccess.MagentoSoapServiceReference.Mage_Api_Model_Server_Wsi_HandlerPortTypeClient;
-using shoppingCartCustomerAddressEntity = MagentoAccess.MagentoSoapServiceReference.shoppingCartCustomerAddressEntity;
-using shoppingCartCustomerEntity = MagentoAccess.MagentoSoapServiceReference.shoppingCartCustomerEntity;
-using shoppingCartPaymentMethodEntity = MagentoAccess.MagentoSoapServiceReference.shoppingCartPaymentMethodEntity;
-using shoppingCartProductEntity = MagentoAccess.MagentoSoapServiceReference.shoppingCartProductEntity;
 
 namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 {
-	internal partial class ZoeyServiceLowLevelSoap_v_from_1_7_to_1_9_CE: IMagentoServiceLowLevelSoap
+	internal partial class ZoeyServiceLowLevelSoap_v_from_1_7_to_1_9_CE : IMagentoServiceLowLevelSoap
 	{
-		public string ApiUser{ get; private set; }
+		public string ApiUser { get; private set; }
 
-		public string ApiKey{ get; private set; }
+		public string ApiKey { get; private set; }
 
-		public string Store{ get; private set; }
+		public string Store { get; private set; }
 
-		public string BaseMagentoUrl{ get; set; }
+		public string BaseMagentoUrl { get; set; }
 
-		public string StoreVersion{ get; set; }
+		public string StoreVersion { get; set; }
 
 		public bool LogRawMessages { get; private set; }
 
 		[ JsonIgnore ]
 		[ IgnoreDataMember ]
-		public Func< Task< Tuple< string, DateTime > > > PullSessionId{ get; set; }
+		public Func< Task< Tuple< string, DateTime > > > PullSessionId { get; set; }
 
-		protected IMagento1XxxHelper Magento1xxxHelper{ get; set; }
+		protected IMagento1XxxHelper Magento1xxxHelper { get; set; }
 
 		protected const string SoapApiUrl = "index.php/api/v2_soap/index/";
 
-		protected TsZoey_v_1_9_0_1_CE.Mage_Api_Model_Server_Wsi_HandlerPortTypeClient _magentoSoapService;
+		protected Mage_Api_Model_Server_Wsi_HandlerPortTypeClient _magentoSoapService;
 
 		protected string _sessionId;
 
@@ -165,17 +145,17 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 		#region SoapClientsFactories
 		private readonly MagentoServiceSoapClientFactory _clientFactory;
 
-		private sealed class MagentoServiceSoapClientFactory : BaseMagentoServiceSoapClientFactory<TsZoey_v_1_9_0_1_CE.Mage_Api_Model_Server_Wsi_HandlerPortTypeClient, TsZoey_v_1_9_0_1_CE.Mage_Api_Model_Server_Wsi_HandlerPortType>
+		private sealed class MagentoServiceSoapClientFactory : BaseMagentoServiceSoapClientFactory< Mage_Api_Model_Server_Wsi_HandlerPortTypeClient, Mage_Api_Model_Server_Wsi_HandlerPortType >
 		{
 			public MagentoServiceSoapClientFactory( string baseMagentoUrl, bool logRawMessages ) : base( baseMagentoUrl, logRawMessages )
 			{
 			}
 
-			protected override TsZoey_v_1_9_0_1_CE.Mage_Api_Model_Server_Wsi_HandlerPortTypeClient CreateClient()
+			protected override Mage_Api_Model_Server_Wsi_HandlerPortTypeClient CreateClient()
 			{
 				var endPoint = new List< string > { this._baseMagentoUrl, SoapApiUrl }.BuildUrl();
 				var customBinding = CustomBinding( this._baseMagentoUrl, MessageVersion.Soap11 );
-				var magentoSoapService = new TsZoey_v_1_9_0_1_CE.Mage_Api_Model_Server_Wsi_HandlerPortTypeClient( customBinding, new EndpointAddress( endPoint ) );
+				var magentoSoapService = new Mage_Api_Model_Server_Wsi_HandlerPortTypeClient( customBinding, new EndpointAddress( endPoint ) );
 
 				magentoSoapService.Endpoint.Behaviors.Add( new CustomBehavior() { LogRawMessages = this._logRawMessages } );
 
@@ -314,19 +294,19 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 				const int maxCheckCount = 2;
 				const int delayBeforeCheck = 1800000;
 
-				var res = new TsZoey_v_1_9_0_1_CE.catalogProductInfoResponse();
+				var res = new catalogProductInfoResponse();
 				var privateClient = this._clientFactory.GetClient();
 
 				await ActionPolicies.GetAsync.Do( async () =>
 				{
 					var statusChecker = new StatusChecker( maxCheckCount );
 					TimerCallback tcb = statusChecker.CheckStatus;
-					
+
 					privateClient = this._clientFactory.RefreshClient( privateClient );
 					var sessionId = await this.GetSessionId().ConfigureAwait( false );
-					var attributes = new catalogProductRequestAttributes { additional_attributes = request.custAttributes ?? new string[0] };
+					var attributes = new catalogProductRequestAttributes { additional_attributes = request.custAttributes ?? new string[ 0 ] };
 
-					using ( var stateTimer = new Timer( tcb, privateClient, 1000, delayBeforeCheck ) )
+					using( var stateTimer = new Timer( tcb, privateClient, 1000, delayBeforeCheck ) )
 					{
 						res = await privateClient.catalogProductInfoAsync( sessionId.SessionId, request.ProductId, "0", attributes, "1" ).ConfigureAwait( false );
 					}
@@ -349,7 +329,7 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 				const int maxCheckCount = 2;
 				const int delayBeforeCheck = 1800000;
 
-				var res = new TsZoey_v_1_9_0_1_CE.catalogInventoryStockItemListResponse();
+				var res = new catalogInventoryStockItemListResponse();
 				var privateClient = this._clientFactory.GetClient();
 
 				await ActionPolicies.GetAsync.Do( async () =>
@@ -382,9 +362,7 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 			{
 				var stockItemsProcessed = stockItems.Select( x =>
 				{
-					var catalogInventoryStockItemUpdateEntity = ( x.Qty > 0 ) ?
-						new catalogInventoryStockItemUpdateEntity() { is_in_stock = 1, is_in_stockSpecified = true, qty = x.Qty.ToString() } :
-						new catalogInventoryStockItemUpdateEntity() { is_in_stock = 0, is_in_stockSpecified = false, qty = x.Qty.ToString() };
+					var catalogInventoryStockItemUpdateEntity = ( x.Qty > 0 ) ? new catalogInventoryStockItemUpdateEntity() { is_in_stock = 1, is_in_stockSpecified = true, qty = x.Qty.ToString() } : new catalogInventoryStockItemUpdateEntity() { is_in_stock = 0, is_in_stockSpecified = false, qty = x.Qty.ToString() };
 					return Tuple.Create( x, catalogInventoryStockItemUpdateEntity );
 				} );
 
@@ -430,16 +408,13 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 			{
 				var methodParameters = new List< PutStockItem > { putStockItem }.ToJson();
 
-				var catalogInventoryStockItemUpdateEntity = ( putStockItem.Qty > 0 ) ?
-					new catalogInventoryStockItemUpdateEntity() { is_in_stock = 1, is_in_stockSpecified = true, qty = putStockItem.Qty.ToString() } :
-					new catalogInventoryStockItemUpdateEntity() { is_in_stock = 0, is_in_stockSpecified = false, qty = putStockItem.Qty.ToString() };
+				var catalogInventoryStockItemUpdateEntity = ( putStockItem.Qty > 0 ) ? new catalogInventoryStockItemUpdateEntity() { is_in_stock = 1, is_in_stockSpecified = true, qty = putStockItem.Qty.ToString() } : new catalogInventoryStockItemUpdateEntity() { is_in_stock = 0, is_in_stockSpecified = false, qty = putStockItem.Qty.ToString() };
 
 				const int maxCheckCount = 2;
 				const int delayBeforeCheck = 120000;
 
 				var res = false;
 				var privateClient = this._clientFactory.GetClient();
-
 
 				await ActionPolicies.GetAsync.Do( async () =>
 				{
@@ -470,7 +445,7 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 				throw new MagentoSoapException( $"An error occured during PutStockItemsAsync({productsBriefInfo})", exc );
 			}
 		}
-		
+
 		public virtual async Task< GetMagentoInfoResponse > GetMagentoInfoAsync( bool suppressException, Mark mark = null )
 		{
 			try
@@ -544,7 +519,7 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 			int websiteId = 0,
 			int storeId = 0,
 			int groupId = 0
-			)
+		)
 		{
 			try
 			{
@@ -576,7 +551,7 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 			{
 				var sessionId = await this.GetSessionId().ConfigureAwait( false );
 
-				var cutomers = await this._magentoSoapService.customerCustomerListAsync( sessionId.SessionId, new filters() ).ConfigureAwait( false );
+				var cutomers = await this._magentoSoapService.customerCustomerListAsync( sessionId.SessionId, new TsZoey_v_1_9_0_1_CE.filters() ).ConfigureAwait( false );
 
 				var customer = cutomers.result.First( x => x.customer_id == customerId );
 
@@ -871,7 +846,8 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 				{
 					return default(TResult);
 				}
-				throw new MagentoSoapException( $"An error occured during{callerName}->{nameof( this.GetWithAsync )}", exc );
+
+				throw new MagentoSoapException( $"An error occured during{callerName}->{nameof(this.GetWithAsync)}", exc );
 			}
 		}
 
@@ -882,7 +858,7 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 				string.IsNullOrWhiteSpace( this.ApiUser ) ? PredefinedValues.NotAvailable : this.ApiUser,
 				string.IsNullOrWhiteSpace( this.ApiKey ) ? PredefinedValues.NotAvailable : this.ApiKey,
 				string.IsNullOrWhiteSpace( this.Store ) ? PredefinedValues.NotAvailable : this.Store
-				);
+			);
 		}
 
 		private string CreateMethodCallInfo( string methodParameters = "", Mark mark = null, string errors = "", string methodResult = "", string additionalInfo = "", [ CallerMemberName ] string memberName = "", string notes = "" )
@@ -899,7 +875,7 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 				string.IsNullOrWhiteSpace( methodResult ) ? string.Empty : ", Result:" + methodResult,
 				string.IsNullOrWhiteSpace( notes ) ? string.Empty : ", Notes:" + notes,
 				string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : ", AdditionalInfo: " + additionalInfo
-				);
+			);
 			return str;
 		}
 	}
