@@ -10,7 +10,6 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MagentoAccess.MagentoSoapServiceReference;
 using MagentoAccess.Misc;
 using MagentoAccess.Models.GetProducts;
 using MagentoAccess.Models.Services.Soap.GetCategoryTree;
@@ -24,19 +23,43 @@ using MagentoAccess.Models.Services.Soap.GetSessionId;
 using MagentoAccess.Models.Services.Soap.GetStockItems;
 using MagentoAccess.Models.Services.Soap.PutStockItems;
 using MagentoAccess.Services.Soap._1_9_2_1_ce;
+using MagentoAccess.TsZoey_v_1_9_0_1_CE;
 using Netco.Extensions;
 using Netco.Logging;
 using Newtonsoft.Json;
+using associativeEntity = MagentoAccess.MagentoSoapServiceReference.associativeEntity;
+using catalogCategoryTreeResponse = MagentoAccess.TsZoey_v_1_9_0_1_CE.catalogCategoryTreeResponse;
+using catalogInventoryStockItemListResponse = MagentoAccess.MagentoSoapServiceReference.catalogInventoryStockItemListResponse;
+using catalogInventoryStockItemMultiUpdateResponse = MagentoAccess.MagentoSoapServiceReference.catalogInventoryStockItemMultiUpdateResponse;
+using catalogInventoryStockItemUpdateEntity = MagentoAccess.MagentoSoapServiceReference.catalogInventoryStockItemUpdateEntity;
+using catalogProductAttributeInfoResponse = MagentoAccess.TsZoey_v_1_9_0_1_CE.catalogProductAttributeInfoResponse;
+using catalogProductAttributeMediaListResponse = MagentoAccess.TsZoey_v_1_9_0_1_CE.catalogProductAttributeMediaListResponse;
+using catalogProductCreateEntity = MagentoAccess.MagentoSoapServiceReference.catalogProductCreateEntity;
+using catalogProductInfoResponse = MagentoAccess.MagentoSoapServiceReference.catalogProductInfoResponse;
+using complexFilter = MagentoAccess.MagentoSoapServiceReference.complexFilter;
+using customerCustomerEntityToCreate = MagentoAccess.MagentoSoapServiceReference.customerCustomerEntityToCreate;
+using filters = MagentoAccess.MagentoSoapServiceReference.filters;
+using magentoInfoResponse = MagentoAccess.MagentoSoapServiceReference.magentoInfoResponse;
+using Mage_Api_Model_Server_Wsi_HandlerPortTypeClient = MagentoAccess.MagentoSoapServiceReference.Mage_Api_Model_Server_Wsi_HandlerPortTypeClient;
+using shoppingCartCustomerAddressEntity = MagentoAccess.MagentoSoapServiceReference.shoppingCartCustomerAddressEntity;
+using shoppingCartCustomerEntity = MagentoAccess.MagentoSoapServiceReference.shoppingCartCustomerEntity;
+using shoppingCartPaymentMethodEntity = MagentoAccess.MagentoSoapServiceReference.shoppingCartPaymentMethodEntity;
+using shoppingCartProductEntity = MagentoAccess.MagentoSoapServiceReference.shoppingCartProductEntity;
 
 namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 {
 	internal partial class ZoeyServiceLowLevelSoap_v_from_1_7_to_1_9_CE: IMagentoServiceLowLevelSoap
 	{
 		public string ApiUser{ get; private set; }
+
 		public string ApiKey{ get; private set; }
+
 		public string Store{ get; private set; }
+
 		public string BaseMagentoUrl{ get; set; }
+
 		public string StoreVersion{ get; set; }
+
 		public bool LogRawMessages { get; private set; }
 
 		[ JsonIgnore ]
@@ -47,7 +70,7 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 
 		protected const string SoapApiUrl = "index.php/api/v2_soap/index/";
 
-		protected Mage_Api_Model_Server_Wsi_HandlerPortTypeClient _magentoSoapService;
+		protected TsZoey_v_1_9_0_1_CE.Mage_Api_Model_Server_Wsi_HandlerPortTypeClient _magentoSoapService;
 
 		protected string _sessionId;
 
@@ -60,8 +83,11 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 		protected readonly int SessionIdLifeTime;
 
 		public bool GetStockItemsWithoutSkuImplementedWithPages => false;
+
 		public bool GetOrderByIdForFullInformation => true;
+
 		public bool GetOrdersUsesEntityInsteadOfIncrementId => false;
+
 		private void LogTraceGetResponseException( Exception exception )
 		{
 			MagentoLogger.Log().Trace( exception, "[magento] SOAP throw an exception." );
@@ -139,17 +165,17 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 		#region SoapClientsFactories
 		private readonly MagentoServiceSoapClientFactory _clientFactory;
 
-		private sealed class MagentoServiceSoapClientFactory : BaseMagentoServiceSoapClientFactory< Mage_Api_Model_Server_Wsi_HandlerPortTypeClient, Mage_Api_Model_Server_Wsi_HandlerPortType >
+		private sealed class MagentoServiceSoapClientFactory : BaseMagentoServiceSoapClientFactory<TsZoey_v_1_9_0_1_CE.Mage_Api_Model_Server_Wsi_HandlerPortTypeClient, TsZoey_v_1_9_0_1_CE.Mage_Api_Model_Server_Wsi_HandlerPortType>
 		{
 			public MagentoServiceSoapClientFactory( string baseMagentoUrl, bool logRawMessages ) : base( baseMagentoUrl, logRawMessages )
 			{
 			}
 
-			protected override Mage_Api_Model_Server_Wsi_HandlerPortTypeClient CreateClient()
+			protected override TsZoey_v_1_9_0_1_CE.Mage_Api_Model_Server_Wsi_HandlerPortTypeClient CreateClient()
 			{
 				var endPoint = new List< string > { this._baseMagentoUrl, SoapApiUrl }.BuildUrl();
 				var customBinding = CustomBinding( this._baseMagentoUrl, MessageVersion.Soap11 );
-				var magentoSoapService = new Mage_Api_Model_Server_Wsi_HandlerPortTypeClient( customBinding, new EndpointAddress( endPoint ) );
+				var magentoSoapService = new TsZoey_v_1_9_0_1_CE.Mage_Api_Model_Server_Wsi_HandlerPortTypeClient( customBinding, new EndpointAddress( endPoint ) );
 
 				magentoSoapService.Endpoint.Behaviors.Add( new CustomBehavior() { LogRawMessages = this._logRawMessages } );
 
@@ -184,7 +210,9 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 					var sessionId = await this.GetSessionId().ConfigureAwait( false );
 
 					using( var stateTimer = new Timer( tcb, privateClient, 1000, delayBeforeCheck ) )
+					{
 						res = await privateClient.catalogCategoryTreeAsync( sessionId.SessionId, rootCategory, "0" ).ConfigureAwait( false );
+					}
 				} ).ConfigureAwait( false );
 
 				return new GetCategoryTreeResponse( res );
@@ -214,7 +242,9 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 					var sessionId = await this.GetSessionId().ConfigureAwait( false );
 
 					using( var stateTimer = new Timer( tcb, privateClient, 1000, delayBeforeCheck ) )
+					{
 						res = await privateClient.catalogProductAttributeMediaListAsync( sessionId.SessionId, getProductAttributeMediaListRequest.ProductId, "0", "1" ).ConfigureAwait( false );
+					}
 				} ).ConfigureAwait( false );
 
 				return new ProductAttributeMediaListResponse( res, getProductAttributeMediaListRequest.ProductId, getProductAttributeMediaListRequest.Sku );
@@ -245,7 +275,9 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 					try // this try catch block is crunch for 1.7
 					{
 						using( var stateTimer = new Timer( tcb, privateClient, 1000, delayBeforeCheck ) )
+						{
 							res = await privateClient.catalogProductAttributeInfoAsync( sessionId.SessionId, attribute ).ConfigureAwait( false );
+						}
 					}
 					catch( Exception exc )
 					{
@@ -282,9 +314,8 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 				const int maxCheckCount = 2;
 				const int delayBeforeCheck = 1800000;
 
-				var res = new catalogProductInfoResponse();
+				var res = new TsZoey_v_1_9_0_1_CE.catalogProductInfoResponse();
 				var privateClient = this._clientFactory.GetClient();
-
 
 				await ActionPolicies.GetAsync.Do( async () =>
 				{
@@ -293,10 +324,12 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 					
 					privateClient = this._clientFactory.RefreshClient( privateClient );
 					var sessionId = await this.GetSessionId().ConfigureAwait( false );
-					var attributes = new catalogProductRequestAttributes { additional_attributes = request.custAttributes ?? new string[ 0 ] };
+					var attributes = new catalogProductRequestAttributes { additional_attributes = request.custAttributes ?? new string[0] };
 
-					using( var stateTimer = new Timer( tcb, privateClient, 1000, delayBeforeCheck ) )
+					using ( var stateTimer = new Timer( tcb, privateClient, 1000, delayBeforeCheck ) )
+					{
 						res = await privateClient.catalogProductInfoAsync( sessionId.SessionId, request.ProductId, "0", attributes, "1" ).ConfigureAwait( false );
+					}
 				} ).ConfigureAwait( false );
 
 				return new CatalogProductInfoResponse( res );
@@ -316,7 +349,7 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 				const int maxCheckCount = 2;
 				const int delayBeforeCheck = 1800000;
 
-				var res = new catalogInventoryStockItemListResponse();
+				var res = new TsZoey_v_1_9_0_1_CE.catalogInventoryStockItemListResponse();
 				var privateClient = this._clientFactory.GetClient();
 
 				await ActionPolicies.GetAsync.Do( async () =>
@@ -328,7 +361,9 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 					var sessionId = await this.GetSessionId().ConfigureAwait( false );
 
 					using( var stateTimer = new Timer( tcb, privateClient, 1000, delayBeforeCheck ) )
+					{
 						res = await privateClient.catalogInventoryStockItemListAsync( sessionId.SessionId, skusArray ).ConfigureAwait( false );
+					}
 				} ).ConfigureAwait( false );
 
 				return new InventoryStockItemListResponse( res );
