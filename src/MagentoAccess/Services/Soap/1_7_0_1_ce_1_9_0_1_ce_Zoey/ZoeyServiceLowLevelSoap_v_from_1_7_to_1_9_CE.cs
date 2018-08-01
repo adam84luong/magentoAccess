@@ -22,9 +22,6 @@ using MagentoAccess.Models.Services.Soap.PutStockItems;
 using MagentoAccess.TsZoey_v_1_9_0_1_CE;
 using Netco.Logging;
 using Newtonsoft.Json;
-using associativeEntity = MagentoAccess.MagentoSoapServiceReference.associativeEntity;
-using complexFilter = MagentoAccess.MagentoSoapServiceReference.complexFilter;
-using filters = MagentoAccess.MagentoSoapServiceReference.filters;
 
 namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 {
@@ -164,10 +161,10 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 		}
 		#endregion
 
-		private static void AddFilter( TsZoey_v_1_9_0_1_CE.filters filters, string value, string key, string valueKey )
+		private static void AddFilter( filters filters, string value, string key, string valueKey )
 		{
 			var temp = filters.complex_filter.ToList();
-			temp.Add( new TsZoey_v_1_9_0_1_CE.complexFilter() { key = key, value = new TsZoey_v_1_9_0_1_CE.associativeEntity() { key = valueKey, value = value } } );
+			temp.Add( new complexFilter() { key = key, value = new associativeEntity() { key = valueKey, value = value } } );
 			filters.complex_filter = temp.ToArray();
 		}
 
@@ -551,7 +548,7 @@ namespace MagentoAccess.Services.Soap._1_7_0_1_ce_1_9_0_1_ce_Zoey
 			{
 				var sessionId = await this.GetSessionId().ConfigureAwait( false );
 
-				var cutomers = await this._magentoSoapService.customerCustomerListAsync( sessionId.SessionId, new TsZoey_v_1_9_0_1_CE.filters() ).ConfigureAwait( false );
+				var cutomers = await this._magentoSoapService.customerCustomerListAsync( sessionId.SessionId, new filters() ).ConfigureAwait( false );
 
 				var customer = cutomers.result.First( x => x.customer_id == customerId );
 
